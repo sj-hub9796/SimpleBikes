@@ -10,6 +10,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.sjhub.simplebikes.registry.bikes.BikeTypes;
 import net.sjhub.simplebikes.registry.bikes.CaptureBikeType;
+import net.sjhub.simplebikes.registry.sounds.SimpleSounds;
 
 public class BikeEntity extends EntityLiving {
 
@@ -59,6 +60,7 @@ public class BikeEntity extends EntityLiving {
     @Override
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
         if (!this.world.isRemote) {
+            player.playSound(SimpleSounds.BIKE_RINGING, 1.0F, 1.5F);
             player.startRiding(this);
             return true;
         }
