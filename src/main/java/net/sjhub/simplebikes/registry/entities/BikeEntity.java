@@ -41,7 +41,7 @@ public class BikeEntity extends EntityLiving {
 
         if (CaptureBikeType.getBikeTypes(this.getUniqueID()) != null) {
             BikeTypes bikeType = CaptureBikeType.getBikeTypes(this.getUniqueID());
-            this.setSize(bikeType.getWidth(), bikeType.getHeight());
+            //this.setSize(bikeType.getWidth(), bikeType.getHeight());
         }
 
         if (this.isBeingRidden() && this.getControllingPassenger() != null) {
@@ -65,7 +65,7 @@ public class BikeEntity extends EntityLiving {
             double posX = this.getPosition().getX();
             double posY = this.getPosition().getY();
             double posZ = this.getPosition().getZ();
-            world.playSound(null,posX, posY, posZ, SimpleSounds.BIKE_RINGING, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            world.playSound(null, posX, posY, posZ, SimpleSounds.BIKE_RINGING, SoundCategory.HOSTILE, 1.0F, 1.0F);
             player.startRiding(this);
             return true;
         }
