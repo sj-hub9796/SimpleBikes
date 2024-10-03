@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.sjhub.simplebikes.proxy.CommonProxy;
 import net.sjhub.simplebikes.registry.entities.SimpleEntities;
 import net.sjhub.simplebikes.registry.items.SimpleItems;
+import net.sjhub.simplebikes.registry.sounds.SimpleSounds;
 import net.sjhub.simplebikes.simplebikes.Tags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,9 +31,11 @@ public class SimpleBike {
         proxy.preInit(event);
         SimpleItems.registerItems();
         SimpleEntities.registerEntities();
+        SimpleSounds.registerSounds();
 
         MinecraftForge.EVENT_BUS.register(SimpleItems.class);
         MinecraftForge.EVENT_BUS.register(SimpleEntities.class);
+        MinecraftForge.EVENT_BUS.register(SimpleSounds.class);
     }
 
     @Mod.EventHandler
