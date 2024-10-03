@@ -16,6 +16,7 @@ public class BikeJumpHandler {
             if (Minecraft.getMinecraft().gameSettings.keyBindJump.isPressed()) {
                 if (player.isRiding() && player.getRidingEntity() instanceof BikeEntity) {
                     BikeEntity bikeEntity = (BikeEntity) player.getRidingEntity();
+                    bikeEntity.jump();
                 }
             }
         }
