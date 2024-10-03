@@ -7,6 +7,7 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.sjhub.simplebikes.registry.bikes.BikeTypes;
 import net.sjhub.simplebikes.registry.bikes.CaptureBikeType;
@@ -60,7 +61,11 @@ public class BikeEntity extends EntityLiving {
     @Override
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
         if (!this.world.isRemote) {
-            player.playSound(SimpleSounds.BIKE_RINGING, 1.0F, 1.5F);
+            World world = this.getEntityWorld();
+            double posX = this.getPosition().getX();
+            double posY = this.getPosition().getY();
+            double posZ = this.getPosition().getZ();
+            world.playSound(null,posX, posY, posZ, SimpleSounds.BIKE_RINGING, SoundCategory.HOSTILE, 1.0F, 1.0F);
             player.startRiding(this);
             return true;
         }

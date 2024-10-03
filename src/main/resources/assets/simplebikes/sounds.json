@@ -1,7 +1,12 @@
 {
   "bike_ringing": {
+    "category": "entity",
+    "subtitle": "bike_ringing",
     "sounds": [
-      "simplebikes:bike_ringing"
+      {
+        "name": "simplebikes:bike_ringing",
+        "stream": true
+      }
     ]
   }
 }

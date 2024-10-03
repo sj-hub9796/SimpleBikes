@@ -35,7 +35,6 @@ public class SimpleBike {
 
         MinecraftForge.EVENT_BUS.register(SimpleItems.class);
         MinecraftForge.EVENT_BUS.register(SimpleEntities.class);
-        MinecraftForge.EVENT_BUS.register(SimpleSounds.class);
     }
 
     @Mod.EventHandler
