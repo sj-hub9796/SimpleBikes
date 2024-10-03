@@ -3,10 +3,9 @@ package net.sjhub.simplebikes.registry.render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 import net.sjhub.simplebikes.registry.bikes.BikeTypes;
-import net.sjhub.simplebikes.registry.entities.BikeEntity;
 import net.sjhub.simplebikes.registry.bikes.CaptureBikeType;
+import net.sjhub.simplebikes.registry.entities.BikeEntity;
 
 import javax.annotation.Nullable;
 

@@ -1,7 +1,6 @@
 package net.sjhub.simplebikes.registry.entities;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.sjhub.simplebikes.SimpleBike;
 import net.sjhub.simplebikes.simplebikes.Tags;
