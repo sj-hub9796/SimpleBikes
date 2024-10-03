@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.sjhub.simplebikes.SimpleBike;
 import net.sjhub.simplebikes.registry.bikes.BikeTypes;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +39,18 @@ public class SimpleItems {
         ITEMS.add(ACRO_BIKE);
         ITEMS.add(MACH_BIKE);
         SimpleBike.LOGGER.info("Registration Done!");
+    }
+
+    @Nullable
+    public static Item getItem(BikeTypes bikeTypes) {
+        for (Item item : ITEMS) {
+            if (item instanceof BikeItems) {
+                BikeItems bikeItem = (BikeItems) item;
+                if (bikeItem.getBikeType() == bikeTypes) {
+                    return item;
+                }
+            }
+        }
+        return null;
     }
 }
