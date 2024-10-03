@@ -65,7 +65,7 @@ public class BikeEntity extends EntityLiving {
             double posX = this.getPosition().getX();
             double posY = this.getPosition().getY();
             double posZ = this.getPosition().getZ();
-            world.playSound(null,posX, posY, posZ, SimpleSounds.BIKE_RINGING, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            world.playSound(null, posX, posY, posZ, SimpleSounds.BIKE_RINGING, SoundCategory.HOSTILE, 1.0F, 1.0F);
             player.startRiding(this);
             return true;
         }
