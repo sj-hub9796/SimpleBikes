@@ -505,13 +505,36 @@ public class ModelMachbike extends ModelBase {
       this.wheel_axelB.render(f5);
    }
 
+   public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
+      super.setRotationAngles(par1, par2, par3, par4, par5, par6, entity);
+
+      // 엔티티의 이동 속도에 따른 계산
+      if (entity.motionX != 0 || entity.motionZ != 0) {
+         float speed = (float) Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ); // 속도 계산
+         float wheelRotation = speed * 10F; // 바퀴 회전 속도
+         float pedalRotation = speed / 10F; // 페달 회전 속도
+
+         // 바퀴 회전
+         this.frontTire.rotateAngleX += wheelRotation;
+         this.rearTire.rotateAngleX += wheelRotation;
+
+         // 페달 회전
+         this.peddlearmL.rotateAngleX += pedalRotation;
+         this.peddlearmR.rotateAngleX += pedalRotation;
+         this.PeddleL.rotateAngleX += pedalRotation;
+         this.PeddleR.rotateAngleX += pedalRotation;
+      }
+
+      float yawChange = entity.rotationYaw - entity.prevRotationYaw;
+
+      this.handleAssembly.rotateAngleY = yawChange * 0.0349066F;
+      this.frontTire.rotateAngleY = yawChange * 0.0349066F;
+   }
+
+
    private void setRotation(ModelRenderer model, float x, float y, float z) {
       model.rotateAngleX = x;
       model.rotateAngleY = y;
       model.rotateAngleZ = z;
-   }
-
-   public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
-      super.setRotationAngles(par1, par2, par3, par4, par5, par6, entity);
    }
 }
