@@ -8,5 +8,25 @@
         "stream": true
       }
     ]
+  },
+  "bike_step": {
+    "category": "entity",
+    "subtitle": "bike_step",
+    "sounds": [
+      {
+        "name": "simplebikes:bike_step",
+        "stream": true
+      }
+    ]
+  },
+  "bike_landing": {
+    "category": "entity",
+    "subtitle": "bike_landing",
+    "sounds": [
+      {
+        "name": "simplebikes:bike_landing",
+        "stream": true
+      }
+    ]
   }
 }

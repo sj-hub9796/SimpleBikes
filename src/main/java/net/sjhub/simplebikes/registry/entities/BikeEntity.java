@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -108,9 +109,29 @@ public class BikeEntity extends EntityLiving {
     private final float rotationSpeed = 12.0F;
     private boolean isJumping = false;
 
+    private int soundTimer = 0;
+    private final int soundInterval = 70;
+
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
+
+        // 엔티티의 움직임 계산
+        SoundEvent soundEvent = SimpleSounds.BIKE_STEP;
+        if (this.motionX != 0 || this.motionZ != 0) {
+            // 첫 회 사운드를 즉시 재생하고 이후로 타이머에 따라 재생
+            if (soundTimer == 0) {
+                this.playSound(soundEvent, 10.0F, 1.0F); // 예시로 말을 달리는 소리 사용
+                soundTimer = 1; // 타이머 초기화 후 증가
+            } else if (soundTimer >= soundInterval) {
+                this.playSound(soundEvent, 10.0F, 1.0F); // 사운드 재생
+                soundTimer = 1; // 타이머 초기화
+            }
+            soundTimer++; // 타이머 증가
+        } else {
+            // 엔티티가 멈추면 타이머 초기화
+            soundTimer = 0;
+        }
 
         BikeTypes bikeType = CaptureBikeType.getBikeTypes(this.getUniqueID());
         if (bikeType == null) return;
@@ -139,6 +160,10 @@ public class BikeEntity extends EntityLiving {
         IBlockState blockState = world.getBlockState(blockPos);
 
         if (this.motionY <= 0 && blockState.getBlock() != Blocks.AIR) {
+            // 착지시
+            if (isJumping) {
+                this.playSound(SimpleSounds.BIKE_LANDING, 1.0F, 1.0F);
+            }
             isJumping = false;
         }
 

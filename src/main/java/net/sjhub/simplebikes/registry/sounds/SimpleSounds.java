@@ -10,6 +10,8 @@ import net.sjhub.simplebikes.simplebikes.Tags;
 public class SimpleSounds {
 
     public static SoundEvent BIKE_RINGING;
+    public static SoundEvent BIKE_STEP;
+    public static SoundEvent BIKE_LANDING;
 
     private static SoundEvent registerSound(String name) {
         ResourceLocation location = new ResourceLocation(Tags.MOD_ID, name);
@@ -22,6 +24,8 @@ public class SimpleSounds {
     public static void registerSounds() {
         SimpleBike.LOGGER.info("Register Sounds...");
         BIKE_RINGING = registerSound("bike_ringing");
+        BIKE_STEP = registerSound("bike_step");
+        BIKE_LANDING = registerSound("bike_landing");
         SimpleBike.LOGGER.info("Registration Done!");
     }
 }
