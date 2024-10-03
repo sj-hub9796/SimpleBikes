@@ -116,6 +116,12 @@ public class BikeEntity extends EntityLiving {
     public void onLivingUpdate() {
         super.onLivingUpdate();
 
+        BikeTypes bikeType = CaptureBikeType.getBikeTypes(this.getUniqueID());
+        if (bikeType == null) return;
+
+        if (!(this.getControllingPassenger() instanceof EntityPlayer)) return;
+        EntityPlayer player = (EntityPlayer) this.getControllingPassenger();
+
         // 엔티티의 움직임 계산
         SoundEvent soundEvent = SimpleSounds.BIKE_STEP;
         if (this.motionX != 0 || this.motionZ != 0) {
@@ -132,12 +138,6 @@ public class BikeEntity extends EntityLiving {
             // 엔티티가 멈추면 타이머 초기화
             soundTimer = 0;
         }
-
-        BikeTypes bikeType = CaptureBikeType.getBikeTypes(this.getUniqueID());
-        if (bikeType == null) return;
-
-        if (!(this.getControllingPassenger() instanceof EntityPlayer)) return;
-        EntityPlayer player = (EntityPlayer) this.getControllingPassenger();
 
         boolean moveForward = Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown();
         boolean moveBackWard = Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown();
