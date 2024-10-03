@@ -24,8 +24,13 @@ public class SimpleRenderer extends RenderLiving<BikeEntity> {
     @Override
     public void doRender(BikeEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         BikeTypes bikeType = CaptureBikeType.getBikeTypesFallback(entity.getUniqueID());
-        this.mainModel = bikeType.getModel();
-        this.shadowSize = bikeType.getHeight() / 2;
+        if (this.mainModel != bikeType.getModel()) {
+            this.mainModel = bikeType.getModel();
+        }
+
+        if (this.shadowSize != bikeType.getHeight() / 2) {
+            this.shadowSize = bikeType.getHeight() / 2;
+        }
 
         double radianYaw = Math.toRadians(entityYaw);
         double offsetX = x + (bikeType.getOffsetX() * Math.cos(radianYaw) - bikeType.getOffsetZ() * Math.sin(radianYaw));
