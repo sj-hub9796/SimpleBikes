@@ -223,7 +223,6 @@ public class BikeEntity extends EntityLiving {
         this.renderYawOffset = this.rotationYaw; // 모델의 회전 오프셋 설정
 
         if (!moveForward && !moveBackWard && (turnLeft || turnRight)) {
-            // 강제로 엔티티를 "업데이트된 상태"로 만들기 위해 미세한 움직임을 추가
             this.velocityChanged = true; // 렌더링 업데이트를 위해 위치가 변경되었음을 알림
         }
 
