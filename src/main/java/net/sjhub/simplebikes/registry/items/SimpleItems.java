@@ -9,21 +9,24 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.sjhub.simplebikes.SimpleBike;
 import net.sjhub.simplebikes.registry.bikes.BikeTypes;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleItems {
 
-    public static final List<Item> ITEMS = new ArrayList<Item>();
+    public static final List<Item> ITEMS = new ArrayList<>();
 
-    public static final Item ACRO_BIKE = new BikeItems("acro_bike", BikeTypes.ACRO_BIKE);
-    public static final Item MACH_BIKE = new BikeItems("mach_bike", BikeTypes.MACH_BIKE);
-
+    public static void registerItems() {
+        SimpleBike.LOGGER.info("Registering Items...");
+        BikeTypes.initItems();
+        for (BikeTypes bikeTypes : BikeTypes.values()) {
+            ITEMS.add(bikeTypes.getItem());
+        }
+        SimpleBike.LOGGER.info("Registering Items... Done!");
+    }
 
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
-        SimpleBike.LOGGER.info("Items: " + ITEMS);
         event.getRegistry().registerAll(ITEMS.toArray(new Item[]{}));
     }
 
@@ -32,25 +35,5 @@ public class SimpleItems {
         for (Item item : ITEMS) {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
         }
-    }
-
-    public static void registerItems() {
-        SimpleBike.LOGGER.info("Register Items...");
-        ITEMS.add(ACRO_BIKE);
-        ITEMS.add(MACH_BIKE);
-        SimpleBike.LOGGER.info("Registration Done!");
-    }
-
-    @Nullable
-    public static Item getItem(BikeTypes bikeTypes) {
-        for (Item item : ITEMS) {
-            if (item instanceof BikeItems) {
-                BikeItems bikeItem = (BikeItems) item;
-                if (bikeItem.getBikeType() == bikeTypes) {
-                    return item;
-                }
-            }
-        }
-        return null;
     }
 }

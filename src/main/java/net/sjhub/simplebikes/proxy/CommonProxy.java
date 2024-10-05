@@ -11,6 +11,6 @@ public class CommonProxy {
     public void init(FMLInitializationEvent event) {
     }
 
-    public void registerEntityRenderers() {
+    public void registerRenderers() {
     }
 }

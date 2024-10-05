@@ -3,6 +3,8 @@ package net.sjhub.simplebikes.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.sjhub.simplebikes.registry.bikes.acrobike.entities.EntityAcrobike;
+import net.sjhub.simplebikes.registry.bikes.machbike.entities.EntityMachbike;
 
 public class ModelMachbike extends ModelBase {
    ModelRenderer frame10;
@@ -505,30 +507,37 @@ public class ModelMachbike extends ModelBase {
       this.wheel_axelB.render(f5);
    }
 
+   @Override
    public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
       super.setRotationAngles(par1, par2, par3, par4, par5, par6, entity);
 
       // 엔티티의 이동 속도에 따른 계산
-      if (entity.motionX != 0 || entity.motionZ != 0) {
-         float speed = (float) Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ); // 속도 계산
-         float wheelRotation = speed * 10F; // 바퀴 회전 속도
-         float pedalRotation = speed / 10F; // 페달 회전 속도
+      if (entity instanceof EntityMachbike) {
+         EntityMachbike machbike = (EntityMachbike) entity;
+
+         if (machbike.motionX != 0 || machbike.motionZ != 0) {
+            float speed = (float) Math.sqrt(machbike.motionX * machbike.motionX + machbike.motionZ * machbike.motionZ); // 속도 계산
+            float wheelRotation = speed / 10F; // 바퀴 회전 속도
+            float pedalRotation = speed / 10F; // 페달 회전 속도
+
+            machbike.wheelRotation += wheelRotation;
+            machbike.pedalRotation += pedalRotation;
+         }
 
          // 바퀴 회전
-         this.frontTire.rotateAngleX += wheelRotation;
-         this.rearTire.rotateAngleX += wheelRotation;
+         this.frontTire.rotateAngleX = machbike.wheelRotation;
+         this.rearTire.rotateAngleX = machbike.wheelRotation;
 
          // 페달 회전
-         this.peddlearmL.rotateAngleX += pedalRotation;
-         this.peddlearmR.rotateAngleX += pedalRotation;
-         this.PeddleL.rotateAngleX += pedalRotation;
-         this.PeddleR.rotateAngleX += pedalRotation;
+         this.peddlearmL.rotateAngleX = machbike.pedalRotation;
+         this.peddlearmR.rotateAngleX = machbike.pedalRotation + (float) Math.PI;
+         this.PeddleL.rotateAngleX = machbike.pedalRotation;
+         this.PeddleR.rotateAngleX = machbike.pedalRotation + (float) Math.PI;
+
+         float yawChange = machbike.rotationYaw - machbike.prevRotationYaw;
+         this.handleAssembly.rotateAngleY = yawChange * 0.0349066F;
+         this.frontTire.rotateAngleY = yawChange * 0.0349066F;
       }
-
-      float yawChange = entity.rotationYaw - entity.prevRotationYaw;
-
-      this.handleAssembly.rotateAngleY = yawChange * 0.0349066F;
-      this.frontTire.rotateAngleY = yawChange * 0.0349066F;
    }
 
 

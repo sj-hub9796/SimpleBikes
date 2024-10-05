@@ -22,10 +22,10 @@ public class SimpleSounds {
     }
 
     public static void registerSounds() {
-        SimpleBike.LOGGER.info("Register Sounds...");
+        SimpleBike.LOGGER.info("Registering Sounds...");
         BIKE_RINGING = registerSound("bike_ringing");
         BIKE_STEP = registerSound("bike_step");
         BIKE_LANDING = registerSound("bike_landing");
-        SimpleBike.LOGGER.info("Registration Done!");
+        SimpleBike.LOGGER.info("Registering Sounds... Done! ");
     }
 }

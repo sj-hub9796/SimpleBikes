@@ -1,16 +1,12 @@
 package net.sjhub.simplebikes.registry.entities;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -18,41 +14,46 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.sjhub.simplebikes.registry.bikes.BikeTypes;
-import net.sjhub.simplebikes.registry.bikes.CaptureBikeType;
-import net.sjhub.simplebikes.registry.items.SimpleItems;
+import net.sjhub.simplebikes.registry.factory.PlayerJumpTracker;
 import net.sjhub.simplebikes.registry.sounds.SimpleSounds;
 
-public class BikeEntity extends EntityLiving {
+public class EntityBike extends EntityLiving {
 
-    private BikeTypes bikeTypes;
+    protected float defaultSpeed;
+    protected float maxForwardSpeed;
+    protected float maxReverseSpeed;
+    protected float acceleration;
+    protected float deceleration;
+    protected double offsetX;
+    protected double offsetY;
+    protected double offsetZ;
 
-    public BikeEntity(World worldIn) {
+    public double getOffsetX() {
+        return offsetX;
+    }
+
+    public double getOffsetY() {
+        return offsetY;
+    }
+
+    public double getOffsetZ() {
+        return offsetZ;
+    }
+
+    public EntityBike(World worldIn) {
         super(worldIn);
-        this.setSize(1.0F, 1.0F);
-        this.isAirBorne = false;
+        this.defaultSpeed = 0;
+        this.maxForwardSpeed = 0;
+        this.maxReverseSpeed = 0;
+        this.acceleration = 0;
+        this.deceleration = 0;
         this.isImmuneToFire = true;
-    }
-
-    public BikeEntity(World worldIn, BikeTypes bikeTypes) {
-        this(worldIn);
-        this.bikeTypes = bikeTypes;
-        this.init();
-    }
-
-    public void init() {
-        CaptureBikeType.setBikeTypes(this.getUniqueID(), bikeTypes);
-        writeEntityToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-
-        if (CaptureBikeType.getBikeTypes(this.getUniqueID()) != null) {
-            BikeTypes bikeType = CaptureBikeType.getBikeTypes(this.getUniqueID());
-            this.setSize(bikeType.getWidth(), bikeType.getHeight());
-        }
+        this.isAirBorne = false;
+        this.stepHeight = 1.0F;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.offsetZ = 0;
+        this.setSize(1.0F, 1.0F);
     }
 
     @Override
@@ -66,43 +67,7 @@ public class BikeEntity extends EntityLiving {
             player.startRiding(this);
             return true;
         }
-
         return super.processInteract(player, hand);
-    }
-
-    @Override
-    public void writeEntityToNBT(NBTTagCompound compound) {
-        super.writeEntityToNBT(compound);
-        if (this.bikeTypes != null) {
-            compound.setString("BikeType", this.bikeTypes.toString());
-        }
-    }
-
-    @Override
-    public void readEntityFromNBT(NBTTagCompound compound) {
-        super.readEntityFromNBT(compound);
-        if (compound.hasKey("BikeType")) {
-            String bikeTypeString = compound.getString("BikeType");
-            BikeTypes bikeType = BikeTypes.valueOf(bikeTypeString);
-            this.bikeTypes = bikeType;
-            CaptureBikeType.setBikeTypes(this.getUniqueID(), bikeType);
-        }
-    }
-
-    @Override
-    public void onRemovedFromWorld() {
-        super.onRemovedFromWorld();
-        CaptureBikeType.removeBikeTypes(this.getUniqueID());
-    }
-
-    @Override
-    public boolean canFitPassenger(Entity passenger) {
-        return this.getPassengers().size() < 1;
-    }
-
-    @Override
-    public Entity getControllingPassenger() {
-        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
     }
 
     private float currentSpeed = 0.0F;
@@ -116,10 +81,12 @@ public class BikeEntity extends EntityLiving {
     public void onLivingUpdate() {
         super.onLivingUpdate();
 
-        BikeTypes bikeType = CaptureBikeType.getBikeTypes(this.getUniqueID());
-        if (bikeType == null) return;
-
-        if (!(this.getControllingPassenger() instanceof EntityPlayer)) return;
+        if (!(this.getControllingPassenger() instanceof EntityPlayer)) {
+            if (currentSpeed > 0) {
+                currentSpeed = 0;
+            }
+            return;
+        };
         EntityPlayer player = (EntityPlayer) this.getControllingPassenger();
 
         // 엔티티의 움직임 계산
@@ -139,16 +106,16 @@ public class BikeEntity extends EntityLiving {
             soundTimer = 0;
         }
 
-        boolean moveForward = Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown();
-        boolean moveBackWard = Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown();
-        boolean turnLeft = Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown();
-        boolean turnRight = Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown();
-        boolean jump = Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown();
+        boolean moveForward = player.moveForward > 0;
+        boolean moveBackward = player.moveForward < 0;
+        boolean turnLeft = player.moveStrafing > 0;
+        boolean turnRight = player.moveStrafing < 0;
+        boolean jump = PlayerJumpTracker.getInstance().hasPlayerJumped(player.getUniqueID());
 
-        float maxForwardSpeed = (float) bikeType.getMaxForwardSpeed();
-        float maxReverseSpeed = (float) bikeType.getMaxReverseSpeed();
-        float acceleration = (float) bikeType.getAcceleration();
-        float deceleration = (float) bikeType.getDeceleration();
+        float maxForwardSpeed = this.maxForwardSpeed;
+        float maxReverseSpeed = this.maxReverseSpeed;
+        float acceleration = this.acceleration;
+        float deceleration = this.deceleration;
 
         // 점프 처리
         if (jump && !isJumping) {
@@ -176,7 +143,7 @@ public class BikeEntity extends EntityLiving {
                     currentSpeed = maxForwardSpeed; // 최대 속도 제한
                 }
             }
-        } else if (moveBackWard) {
+        } else if (moveBackward) {
             // 후진 중: 전진 중일 경우 감속, 후진으로 전환
             if (currentSpeed > -maxReverseSpeed) {
                 if (currentSpeed > 0) {
@@ -222,7 +189,7 @@ public class BikeEntity extends EntityLiving {
         this.rotationYawHead = this.rotationYaw; // 머리 회전과 몸통 회전을 동일하게 설정
         this.renderYawOffset = this.rotationYaw; // 모델의 회전 오프셋 설정
 
-        if (!moveForward && !moveBackWard && (turnLeft || turnRight)) {
+        if (!moveForward && !moveBackward && (turnLeft || turnRight)) {
             this.velocityChanged = true; // 렌더링 업데이트를 위해 위치가 변경되었음을 알림
         }
 
@@ -236,6 +203,16 @@ public class BikeEntity extends EntityLiving {
 
         // 실제 이동
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+    }
+
+    @Override
+    public Entity getControllingPassenger() {
+        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
+    }
+
+    @Override
+    public boolean canFitPassenger(Entity passenger) {
+        return this.getPassengers().size() < 1;
     }
 
     // 낙하 대미지 새로 계산하기
@@ -252,23 +229,18 @@ public class BikeEntity extends EntityLiving {
     @Override
     public void onDeath(DamageSource cause) {
         super.setDead();
-        Item item = SimpleItems.getItem(this.bikeTypes);
-        this.dropItem(item, 1);
     }
 
-    // 피격 사운드 변경
     @Override
     protected void playHurtSound(DamageSource source) {
         this.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, 1F, 2.0F);
     }
 
-    // 넉백 관련
     @Override
     public void knockBack(Entity entityIn, float strength, double xRatio, double zRatio) {
         super.knockBack(entityIn, strength * (float) 0.1, xRatio, zRatio);
     }
 
-    // 엔티티 피격시 색 변하는것 방지
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         boolean result = super.attackEntityFrom(source, amount);

@@ -1,140 +1,78 @@
 package net.sjhub.simplebikes.registry.bikes;
 
-import net.minecraft.client.model.ModelBase;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.sjhub.simplebikes.model.ModelAcrobike;
-import net.sjhub.simplebikes.model.ModelMachbike;
+import net.sjhub.simplebikes.registry.bikes.acrobike.entities.EntityAcrobike;
+import net.sjhub.simplebikes.registry.bikes.machbike.entities.EntityMachbike;
+import net.sjhub.simplebikes.registry.entities.EntityBike;
+import net.sjhub.simplebikes.registry.items.BikeItem;
 import net.sjhub.simplebikes.simplebikes.Tags;
+
+import javax.annotation.Nullable;
 
 public enum BikeTypes {
 
-    ACRO_BIKE(
-            "acro_bike",
-            new ModelAcrobike(),
-            new ResourceLocation(Tags.MOD_ID, "textures/entity/acro_bike.png"),
-            0,
-            -0.15,
-            0.3,
-            1.6F,
-            1.3F,
-            0.01,
-            0.2,
-            0.1,
-            0.02,
-            0.01
+    ACRO_BIKE
+            (
+                    "acro_bike",
+                    null,
+                    new ResourceLocation(Tags.MOD_ID, "textures/entity/acro_bike.png"),
+                    EntityAcrobike.class
+            ),
+    MACH_BIKE
+            (
+                    "mach_bike",
+                    null,
+                    new ResourceLocation(Tags.MOD_ID, "textures/entity/mach_bike.png"),
+                    EntityMachbike.class
 
-    ),
-    MACH_BIKE(
-            "mach_bike",
-            new ModelMachbike(),
-            new ResourceLocation(Tags.MOD_ID, "textures/entity/mach_bike.png"),
-            0,
-            -0.1,
-            0.3,
-            1.6F,
-            1.5F,
-            0.05,
-            0.4,
-            0.2,
-            0.05,
-            0.01
-    );
+            );
+
 
     private final String name;
-    private final ModelBase model;
-    private final ResourceLocation resource;
-    private final double offsetX;
-    private final double offsetY;
-    private final double offsetZ;
-    private final float width;
-    private final float height;
-    private final double defaultSpeed;
-    private final double maxForwardSpeed;
-    private final double maxReverseSpeed;
-    private final double acceleration;
-    private final double deceleration;
+    private Item item;
+    private ResourceLocation texture;
+    private Class<? extends EntityBike> entity;
 
     BikeTypes
-            (
-                    String name,
-                    ModelBase model,
-                    ResourceLocation resource,
-                    double offsetX,
-                    double offsetY,
-                    double offsetZ,
-                    float width,
-                    float height,
-                    double defaultSpeed,
-                    double maxForwardSpeed,
-                    double maxReverseSpeed,
-                    double acceleration,
-                    double deceleration
-            )
+    (
+        String name,
+        @Nullable Item item,
+        ResourceLocation texture,
+        Class<? extends EntityBike> entity
+    )
     {
         this.name = name;
-        this.model = model;
-        this.resource = resource;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.offsetZ = offsetZ;
-        this.width = width;
-        this.height = height;
-        this.defaultSpeed = defaultSpeed;
-        this.maxForwardSpeed = maxForwardSpeed;
-        this.maxReverseSpeed = maxReverseSpeed;
-        this.acceleration = acceleration;
-        this.deceleration = deceleration;
+        this.item = item;
+        this.texture = texture;
+        this.entity = entity;
     }
 
     public String getName() {
         return name;
     }
 
-    public ModelBase getModel() {
-        return model;
+    public Item getItem() {
+        return item;
     }
 
-    public ResourceLocation getResource() {
-        return resource;
+    public Class<? extends EntityBike> getEntity() {
+        return entity;
     }
 
-    public double getOffsetX() {
-        return offsetX;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public double getOffsetY() {
-        return offsetY;
+    public ResourceLocation getTexture() {
+        return texture;
     }
 
-    public double getOffsetZ() {
-        return offsetZ;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public double getDefaultSpeed() {
-        return defaultSpeed;
-    }
-
-    public double getMaxForwardSpeed() {
-        return maxForwardSpeed;
-    }
-
-    public double getMaxReverseSpeed() {
-        return maxReverseSpeed;
-    }
-
-    public double getAcceleration() {
-        return acceleration;
-    }
-
-    public double getDeceleration() {
-        return deceleration;
+    public static void initItems() {
+        for (BikeTypes bikeTypes : BikeTypes.values()) {
+            bikeTypes.setItem(new BikeItem(bikeTypes.getName(), bikeTypes));
+        }
     }
 }

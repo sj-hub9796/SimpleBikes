@@ -3,6 +3,7 @@ package net.sjhub.simplebikes.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.sjhub.simplebikes.registry.bikes.acrobike.entities.EntityAcrobike;
 
 import java.util.Iterator;
 
@@ -524,29 +525,33 @@ public class ModelAcrobike extends ModelBase {
       super.setRotationAngles(par1, par2, par3, par4, par5, par6, entity);
 
       // 엔티티의 이동 속도에 따른 계산
-      if (entity.motionX != 0 || entity.motionZ != 0) {
-         float speed = (float) Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ); // 속도 계산
-         float wheelRotation = speed * 10F; // 바퀴 회전 속도
-         float pedalRotation = speed / 10F; // 페달 회전 속도
+      if (entity instanceof EntityAcrobike) {
+         EntityAcrobike acrobike = (EntityAcrobike) entity;
+
+         if (acrobike.motionX != 0 || acrobike.motionZ != 0) {
+            float speed = (float) Math.sqrt(acrobike.motionX * acrobike.motionX + acrobike.motionZ * acrobike.motionZ); // 속도 계산
+            float wheelRotation = speed / 10F; // 바퀴 회전 속도
+            float pedalRotation = speed / 10F; // 페달 회전 속도
+
+            acrobike.wheelRotation += wheelRotation;
+            acrobike.pedalRotation += pedalRotation;
+         }
 
          // 바퀴 회전
-         this.frontTire.rotateAngleX += wheelRotation;
-         this.rearTire.rotateAngleX += wheelRotation;
+         this.frontTire.rotateAngleX = acrobike.wheelRotation;
+         this.rearTire.rotateAngleX = acrobike.wheelRotation;
 
          // 페달 회전
-         this.peddlearm1.rotateAngleX += pedalRotation;
-         this.peddlearm2.rotateAngleX += pedalRotation;
-         this.Peddle1.rotateAngleX += pedalRotation;
-         this.Peddle2.rotateAngleX += pedalRotation;
+         this.peddlearm1.rotateAngleX = acrobike.pedalRotation;
+         this.peddlearm2.rotateAngleX = acrobike.pedalRotation + (float) Math.PI;
+         this.Peddle1.rotateAngleX = acrobike.pedalRotation;
+         this.Peddle2.rotateAngleX = acrobike.pedalRotation + (float) Math.PI;
+
+         float yawChange = acrobike.rotationYaw - acrobike.prevRotationYaw;
+         this.handleAssembly.rotateAngleY = yawChange * 0.0349066F;
+         this.frontTire.rotateAngleY = yawChange * 0.0349066F;
       }
-
-      float yawChange = entity.rotationYaw - entity.prevRotationYaw;
-
-      this.handleAssembly.rotateAngleY = yawChange * 0.0349066F;
-      this.frontTire.rotateAngleY = yawChange * 0.0349066F;
    }
-
-
 
    private void setRotation(ModelRenderer model, float x, float y, float z) {
       model.rotateAngleX = x;
