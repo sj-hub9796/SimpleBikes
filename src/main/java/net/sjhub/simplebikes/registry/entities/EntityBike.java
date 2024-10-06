@@ -54,6 +54,7 @@ public class EntityBike extends EntityLiving {
         this.offsetY = 0;
         this.offsetZ = 0;
         this.setSize(1.0F, 1.0F);
+        this.enablePersistence();
     }
 
     @Override
@@ -203,6 +204,11 @@ public class EntityBike extends EntityLiving {
 
         // 실제 이동
         this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+    }
+
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
     }
 
     @Override
